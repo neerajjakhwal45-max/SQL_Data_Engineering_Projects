@@ -275,3 +275,29 @@ FROM INFORMATION_schema.schemata;
 USE staging;
 
 SHOW TABLES FROM staging;
+
+
+SELECT COUNT(*) FROM staging.job_postings_flat;
+
+
+
+
+WITH high_sal AS (
+    SELECT 
+        job_id,
+        job_title_short,
+        CASE 
+            WHEN salary_year_avg IS NULL THEN 'Missing'
+            WHEN salary_year_avg < 50_000 THEN 'Low'
+            WHEN salary_year_avg < 150_000 THEN 'Medium'
+            ELSE 'High'
+        END AS salary_status
+    FROM job_postings_fact
+) 
+SELECT 
+    job_id,
+    job_title_short,
+    salary_status
+FROM high_sal
+ORDER BY RANDOM()
+LIMIT 10;
